@@ -1,37 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QuizController;
 
-// Strona główna
+// Strona główna (na razie prosta)
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
 // Lista quizów
-Route::get('/quizzes', function () {
-    $quizzes = [
-        [
-            'id' => 1,
-            'title' => 'Stolice Europy – poziom podstawowy',
-            'description' => 'Sprawdź, czy znasz stolice najważniejszych państw Europy.',
-            'level' => 'łatwy',
-            'region' => 'Europa',
-        ],
-        [
-            'id' => 2,
-            'title' => 'Stolice świata – poziom rozszerzony',
-            'description' => 'Quiz dla ambitnych – stolice mniej oczywistych państw z całego świata.',
-            'level' => 'trudny',
-            'region' => 'świat',
-        ],
-        [
-            'id' => 3,
-            'title' => 'Stolice w Azji',
-            'description' => 'Zweryfikuj swoją wiedzę ze stolic krajów azjatyckich.',
-            'level' => 'średni',
-            'region' => 'Azja',
-        ],
-    ];
+Route::get('/quizzes', [QuizController::class, 'index'])
+    ->name('quizzes.index');
 
-    return view('quizzes', ['quizzes' => $quizzes]);
-})->name('quizzes.index');
+// Pojedynczy quiz + pytania
+Route::get('/quizzes/{id}', [QuizController::class, 'show'])
+    ->name('quizzes.show');
