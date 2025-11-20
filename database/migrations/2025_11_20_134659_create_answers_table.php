@@ -18,8 +18,8 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('text');       // Treść odpowiedzi
-            $table->boolean('is_correct')->default(false); // Czy poprawna
+            $table->string('text');              // treść odpowiedzi
+            $table->boolean('is_correct')->default(false); // czy poprawna
 
             $table->timestamps();
         });

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('answers', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('question_id')
+            $table->foreignId('quiz_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('text');       // Treść odpowiedzi
-            $table->boolean('is_correct')->default(false); // Czy poprawna
+            $table->string('text'); // treść pytania
+            $table->unsignedInteger('position')->default(0); // kolejność w quizie
 
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('answers');
+        Schema::dropIfExists('questions');
     }
 };
