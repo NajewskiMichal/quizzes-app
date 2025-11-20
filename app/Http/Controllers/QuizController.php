@@ -2,72 +2,104 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
     /**
-     * Tymczasowe dane – docelowo pójdą do bazy.
+     * Display a listing of the resource.
      */
-    private function getQuizzes(): array
-    {
-        return [
-            [
-                'id' => 1,
-                'title' => 'Stolice Europy – poziom podstawowy',
-                'description' => 'Sprawdź, czy znasz stolice najważniejszych państw Europy.',
-                'level' => 'łatwy',
-                'region' => 'Europa',
-                'questions' => [
-                    [
-                        'id' => 1,
-                        'text' => 'Stolicą Francji jest:',
-                        'options' => ['Paryż', 'Lyon', 'Marsylia', 'Nicea'],
-                    ],
-                    [
-                        'id' => 2,
-                        'text' => 'Stolicą Niemiec jest:',
-                        'options' => ['Berlin', 'Monachium', 'Hamburg', 'Frankfurt'],
-                    ],
-                ],
-            ],
-            [
-                'id' => 2,
-                'title' => 'Stolice świata – poziom rozszerzony',
-                'description' => 'Quiz dla ambitnych – stolice mniej oczywistych państw.',
-                'level' => 'trudny',
-                'region' => 'świat',
-                'questions' => [
-                    [
-                        'id' => 1,
-                        'text' => 'Stolicą Australii jest:',
-                        'options' => ['Canberra', 'Sydney', 'Melbourne', 'Perth'],
-                    ],
-                    [
-                        'id' => 2,
-                        'text' => 'Stolicą Kanady jest:',
-                        'options' => ['Ottawa', 'Toronto', 'Montreal', 'Vancouver'],
-                    ],
-                ],
-            ],
-        ];
-    }
-
     public function index()
     {
-        $quizzes = $this->getQuizzes();
+        // Pokazujemy opublikowane quizy, najpierw po regionie, potem po tytule
+        $quizzes = Quiz::orderBy('region')
+            ->orderBy('level')
+            ->orderBy('title')
+            ->get();
 
         return view('quizzes.index', compact('quizzes'));
     }
 
-    public function show(int $id)
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $quiz = collect($this->getQuizzes())->firstWhere('id', $id);
+        return view('quizzes.create');
+    }
 
-        if (! $quiz) {
-            abort(404);
-        }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'topic'       => ['required', 'string', 'max:100'],
+            'region'      => ['nullable', 'string', 'max:100'],
+            'level'       => ['required', 'string', 'max:50'],
+            'is_published'=> ['nullable', 'boolean'],
+        ]);
 
+        $validated['is_published'] = $request->has('is_published');
+
+        $quiz = Quiz::create($validated);
+
+        return redirect()
+            ->route('quizzes.show', $quiz)
+            ->with('status', 'Quiz has been created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Quiz $quiz)
+    {
         return view('quizzes.show', compact('quiz'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Quiz $quiz)
+    {
+        return view('quizzes.edit', compact('quiz'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Quiz $quiz)
+    {
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'topic'       => ['required', 'string', 'max:100'],
+            'region'      => ['nullable', 'string', 'max:100'],
+            'level'       => ['required', 'string', 'max:50'],
+            'is_published'=> ['nullable', 'boolean'],
+        ]);
+
+        $validated['is_published'] = $request->has('is_published');
+
+        $quiz->update($validated);
+
+        return redirect()
+            ->route('quizzes.show', $quiz)
+            ->with('status', 'Quiz has been updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Quiz $quiz)
+    {
+        $quiz->delete();
+
+        return redirect()
+            ->route('quizzes.index')
+            ->with('status', 'Quiz has been deleted.');
     }
 }
