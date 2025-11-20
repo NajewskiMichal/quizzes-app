@@ -14,41 +14,33 @@ class QuizSeeder extends Seeder
     {
         $quizzes = [
             [
-                'title' => 'Stolice Europy – poziom podstawowy',
-                'description' => 'Sprawdź, czy znasz stolice najważniejszych państw Europy.',
-                'level' => 'łatwy',
-                'topic' => 'stolice',
-                'region' => 'Europa',
+                'title'        => 'Stolice Europy – poziom podstawowy',
+                'description'  => 'Sprawdź, czy znasz stolice najważniejszych państw Europy.',
+                'level'        => 'łatwy',
+                'topic'        => 'stolice',
+                'region'       => 'Europa',
                 'is_published' => true,
             ],
             [
-                'title' => 'Stolice świata – poziom rozszerzony',
-                'description' => 'Quiz dla ambitnych – stolice mniej oczywistych państw z całego świata.',
-                'level' => 'trudny',
-                'topic' => 'stolice',
-                'region' => 'świat',
+                'title'        => 'Stolice świata – poziom rozszerzony',
+                'description'  => 'Quiz dla ambitnych – stolice mniej oczywistych państw z całego świata.',
+                'level'        => 'trudny',
+                'topic'        => 'stolice',
+                'region'       => 'świat',
                 'is_published' => true,
             ],
             [
-                'title' => 'Stolice w Azji',
-                'description' => 'Zweryfikuj swoją wiedzę z zakresu stolic krajów azjatyckich.',
-                'level' => 'średni',
-                'topic' => 'stolice',
-                'region' => 'Azja',
+                'title'        => 'Stolice w Azji',
+                'description'  => 'Zweryfikuj swoją wiedzę z zakresu stolic krajów azjatyckich.',
+                'level'        => 'średni',
+                'topic'        => 'stolice',
+                'region'       => 'Azja',
                 'is_published' => true,
-            ],
-            [
-                'title' => 'Stolice Afryki – podstawy',
-                'description' => 'Poznaj stolice najważniejszych państw Afryki.',
-                'level' => 'łatwy',
-                'topic' => 'stolice',
-                'region' => 'Afryka',
-                'is_published' => false, // np. szkic, nieopublikowany
             ],
         ];
 
-        foreach ($quizzes as $quiz) {
-            Quiz::create($quiz);
+        foreach ($quizzes as $quizData) {
+            Quiz::create($quizData);
         }
     }
 }

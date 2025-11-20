@@ -48,9 +48,6 @@
                     <input type="text" id="region" name="region"
                            value="{{ old('region', 'Europa') }}"
                            class="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
-                    <p class="text-xs text-slate-500 mt-1">
-                        Np. Europa, Azja, świat...
-                    </p>
                 </div>
 
                 <div>

@@ -14,9 +14,22 @@
             o własne zestawy pytań – dla szkoły, znajomych albo na powtórkę przed maturą.
         </p>
 
-        <a href="{{ route('quizzes.index') }}"
-           class="inline-block bg-sky-700 text-white px-5 py-2 rounded-md font-semibold hover:bg-sky-800">
-            Przejdź do listy quizów
-        </a>
+        <ul class="list-disc list-inside mb-4 text-slate-700">
+            <li>gotowe quizy z geografii (stolice),</li>
+            <li>możliwość tworzenia własnych quizów,</li>
+            <li>pytania typu ABCD z automatyczną oceną wyniku.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ route('quizzes.index') }}"
+               class="inline-block bg-sky-700 text-white px-5 py-2 rounded-md font-semibold hover:bg-sky-800">
+                Przejdź do listy quizów
+            </a>
+
+            <a href="{{ route('quizzes.create') }}"
+               class="inline-block bg-white border border-sky-700 text-sky-800 px-5 py-2 rounded-md font-semibold hover:bg-sky-50">
+                Utwórz własny quiz
+            </a>
+        </div>
     </div>
 @endsection

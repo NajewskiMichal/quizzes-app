@@ -9,7 +9,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Widok resources/views/home.blade.php
         return view('home');
     }
 }

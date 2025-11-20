@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
-            $table->string('title');                 // Np. "Stolice Europy – poziom podstawowy"
+            $table->string('title');                 // np. "Stolice Europy – poziom podstawowy"
             $table->text('description')->nullable(); // Opis
             $table->string('topic')->default('stolice'); // stolice / flagi / rzeki…
             $table->string('region')->nullable();    // Europa / świat / Azja…
             $table->string('level')->default('łatwy');   // łatwy / średni / trudny
             $table->boolean('is_published')->default(true); // czy widoczny w aplikacji
-
-            // Pod przyszłe "własne quizy" można dodać:
-            // $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
 
             $table->timestamps();
         });

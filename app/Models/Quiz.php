@@ -21,4 +21,12 @@ class Quiz extends Model
     protected $casts = [
         'is_published' => 'boolean',
     ];
+
+    /**
+     * Questions assigned to this quiz.
+     */
+    public function questions()
+    {
+        return $this->hasMany(Question::class)->orderBy('position');
+    }
 }

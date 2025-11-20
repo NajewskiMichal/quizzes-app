@@ -12,7 +12,6 @@ class QuizController extends Controller
      */
     public function index()
     {
-        // Pokazujemy opublikowane quizy, najpierw po regionie, potem po tytule
         $quizzes = Quiz::orderBy('region')
             ->orderBy('level')
             ->orderBy('title')
@@ -35,12 +34,12 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'topic'       => ['required', 'string', 'max:100'],
-            'region'      => ['nullable', 'string', 'max:100'],
-            'level'       => ['required', 'string', 'max:50'],
-            'is_published'=> ['nullable', 'boolean'],
+            'title'        => ['required', 'string', 'max:255'],
+            'description'  => ['nullable', 'string'],
+            'topic'        => ['required', 'string', 'max:100'],
+            'region'       => ['nullable', 'string', 'max:100'],
+            'level'        => ['required', 'string', 'max:50'],
+            'is_published' => ['nullable', 'boolean'],
         ]);
 
         $validated['is_published'] = $request->has('is_published');
@@ -57,6 +56,8 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
+        $quiz->load('questions.answers');
+
         return view('quizzes.show', compact('quiz'));
     }
 
@@ -74,12 +75,12 @@ class QuizController extends Controller
     public function update(Request $request, Quiz $quiz)
     {
         $validated = $request->validate([
-            'title'       => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'topic'       => ['required', 'string', 'max:100'],
-            'region'      => ['nullable', 'string', 'max:100'],
-            'level'       => ['required', 'string', 'max:50'],
-            'is_published'=> ['nullable', 'boolean'],
+            'title'        => ['required', 'string', 'max:255'],
+            'description'  => ['nullable', 'string'],
+            'topic'        => ['required', 'string', 'max:100'],
+            'region'       => ['nullable', 'string', 'max:100'],
+            'level'        => ['required', 'string', 'max:50'],
+            'is_published' => ['nullable', 'boolean'],
         ]);
 
         $validated['is_published'] = $request->has('is_published');
