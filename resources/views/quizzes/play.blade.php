@@ -13,46 +13,55 @@
             <strong>Sprawdź wynik</strong>.
         </p>
 
-        @if($quiz->questions->isEmpty())
-            <p class="text-slate-700">
-                Ten quiz nie ma jeszcze pytań. Wróć do listy quizów lub wybierz inny.
-            </p>
+        {{-- Błędy walidacji --}}
+        @if($errors->any())
+            <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+                <p class="font-semibold mb-1">Wystąpiły błędy:</p>
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <a href="{{ route('quizzes.index') }}"
-               class="inline-block mt-4 text-sm text-sky-800 hover:underline">
-                &larr; Wróć do listy quizów
-            </a>
+        @if($quiz->questions->isEmpty())
+            <p class="text-slate-500">
+                Ten quiz nie ma jeszcze żadnych pytań.
+            </p>
         @else
             <form action="{{ route('quizzes.check', $quiz) }}" method="POST" class="space-y-6">
                 @csrf
 
-                @foreach($quiz->questions as $index => $question)
-                    <div class="border rounded-md p-4">
-                        <p class="font-semibold text-slate-800 mb-2">
-                            Pytanie {{ $index + 1 }}:
-                            <span class="font-normal">{{ $question->text }}</span>
-                        </p>
+                @foreach($quiz->questions as $question)
+                    <fieldset class="border border-slate-200 rounded-md p-4">
+                        <legend class="font-semibold text-slate-800 mb-2">
+                            {{ $loop->iteration }}. {{ $question->text }}
+                        </legend>
 
-                        <div class="space-y-1">
-                            @foreach($question->answers as $answerIndex => $answer)
-                                @php
-                                    $label = ['A','B','C','D'][$answerIndex] ?? chr(65 + $answerIndex);
-                                @endphp
-                                <label class="flex items-center gap-2 text-sm text-slate-700">
+                        {{-- Błąd dla konkretnego pytania --}}
+                        @error('answers.' . $question->id)
+                            <p class="text-sm text-red-600 mb-2">{{ $message }}</p>
+                        @enderror
+
+                        <div class="space-y-2">
+                            @foreach($question->answers as $answer)
+                                <label class="flex items-center gap-2">
                                     <input
                                         type="radio"
                                         name="answers[{{ $question->id }}]"
                                         value="{{ $answer->id }}"
-                                        class="h-4 w-4"
+                                        @checked(old('answers.' . $question->id) == $answer->id)
+                                        required
                                     >
-                                    <span><strong>{{ $label }}.</strong> {{ $answer->text }}</span>
+                                    <span>{{ $answer->text }}</span>
                                 </label>
                             @endforeach
                         </div>
-                    </div>
+                    </fieldset>
                 @endforeach
 
-                <div class="mt-4 flex gap-3">
+                <div class="mt-6 flex gap-3">
                     <button type="submit"
                             class="bg-sky-700 text-white px-5 py-2 rounded-md font-semibold hover:bg-sky-800">
                         Zakończ i sprawdź wynik

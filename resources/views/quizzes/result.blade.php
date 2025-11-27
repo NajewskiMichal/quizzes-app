@@ -14,42 +14,42 @@
             ({{ $scorePercent }}%).
         </p>
 
-        <p class="text-slate-700 mb-4 italic">
+        <p class="text-slate-700 mb-6">
             {{ $comment }}
         </p>
 
-        <h2 class="text-lg font-semibold text-slate-800 mb-2">
-            Szczegóły odpowiedzi
-        </h2>
+        <div class="space-y-4">
+            @foreach($questionsWithResult as $row)
+                @php
+                    /** @var \App\Models\Question $question */
+                    $question = $row['question'];
+                    $selected = $row['selectedAnswer'];
+                    $correct  = $row['correctAnswer'];
+                @endphp
 
-        <div class="space-y-3">
-            @foreach($details as $index => $item)
-                <div class="border rounded-md p-3">
-                    <p class="font-semibold text-slate-800 mb-1">
-                        Pytanie {{ $index + 1 }}: {{ $item['question']->text }}
+                <div class="border border-slate-200 rounded-md p-4">
+                    <p class="font-semibold text-slate-800 mb-2">
+                        {{ $loop->iteration }}. {{ $question->text }}
                     </p>
 
                     <p class="text-sm mb-1">
                         Twoja odpowiedź:
-                        @if($item['selectedAnswer'])
-                            <span class="{{ $item['isCorrect'] ? 'text-emerald-700' : 'text-red-700' }}">
-                                {{ $item['selectedAnswer']->text }}
-                                @if($item['isCorrect'])
-                                    (poprawna)
-                                @else
-                                    (niepoprawna)
-                                @endif
-                            </span>
+                        @if($selected)
+                            <strong class="{{ $row['isCorrect'] ? 'text-emerald-700' : 'text-red-700' }}">
+                                {{ $selected->text }}
+                            </strong>
                         @else
-                            <span class="text-slate-500 italic">
-                                brak odpowiedzi
-                            </span>
+                            <span class="text-red-700 font-semibold">brak odpowiedzi</span>
                         @endif
                     </p>
 
                     <p class="text-sm text-slate-700">
                         Poprawna odpowiedź:
-                        <strong>{{ $item['correctAnswer']?->text }}</strong>
+                        @if($correct)
+                            <strong>{{ $correct->text }}</strong>
+                        @else
+                            <span>brak zdefiniowanej poprawnej odpowiedzi</span>
+                        @endif
                     </p>
                 </div>
             @endforeach

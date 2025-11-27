@@ -8,44 +8,61 @@ use Illuminate\Http\Request;
 class QuizPlayController extends Controller
 {
     /**
-     * Show quiz questions and answers form.
+     * Pokaż formularz z pytaniami i odpowiedziami.
      */
     public function showForm(Quiz $quiz)
     {
+        // Dociągamy pytania razem z odpowiedziami
         $quiz->load('questions.answers');
 
-        return view('quizzes.play', compact('quiz'));
+        return view('quizzes.play', [
+            'quiz' => $quiz,
+        ]);
     }
 
     /**
-     * Check user answers and display result.
+     * Sprawdź odpowiedzi użytkownika.
      */
     public function check(Request $request, Quiz $quiz)
     {
         $quiz->load('questions.answers');
 
-        $submitted = $request->input('answers', []); // answers[question_id] = answer_id
+        // WALIDACJA
+        // Oczekujemy tablicy answers[question_id] = answer_id
+        $validated = $request->validate(
+            [
+                'answers'   => ['required', 'array'],
+                'answers.*' => ['required', 'integer', 'exists:answers,id'],
+            ],
+            [
+                'answers.required'   => 'Musisz odpowiedzieć na wszystkie pytania.',
+                'answers.*.required' => 'Musisz wybrać odpowiedź.',
+                'answers.*.exists'   => 'Wybrana odpowiedź jest nieprawidłowa.',
+            ]
+        );
 
-        $totalQuestions = $quiz->questions->count();
+        $userAnswers = $validated['answers'];
+
         $correctCount   = 0;
-        $details        = [];
+        $totalQuestions = $quiz->questions->count();
+        $questionsWithResult = [];
 
         foreach ($quiz->questions as $question) {
-            $selectedAnswerId = $submitted[$question->id] ?? null;
-            $selectedAnswer   = null;
+            $selectedAnswerId = $userAnswers[$question->id] ?? null;
 
-            if ($selectedAnswerId) {
-                $selectedAnswer = $question->answers->firstWhere('id', (int)$selectedAnswerId);
-            }
+            // Wybrana odpowiedź (może być null, jeśli ktoś grzebał w formularzu)
+            $selectedAnswer = $question->answers->firstWhere('id', $selectedAnswerId);
 
+            // Poprawna odpowiedź
             $correctAnswer = $question->answers->firstWhere('is_correct', true);
-            $isCorrect     = $selectedAnswer && $selectedAnswer->is_correct;
+
+            $isCorrect = $selectedAnswer && $selectedAnswer->is_correct;
 
             if ($isCorrect) {
                 $correctCount++;
             }
 
-            $details[] = [
+            $questionsWithResult[] = [
                 'question'       => $question,
                 'selectedAnswer' => $selectedAnswer,
                 'correctAnswer'  => $correctAnswer,
@@ -54,18 +71,19 @@ class QuizPlayController extends Controller
         }
 
         $scorePercent = $totalQuestions > 0
-            ? round($correctCount / $totalQuestions * 100)
+            ? (int) round($correctCount / $totalQuestions * 100)
             : 0;
 
         $comment = $this->buildComment($scorePercent);
 
+        // Można by też zapisać wynik do bazy – na razie samo wyświetlenie
         return view('quizzes.result', [
-            'quiz'           => $quiz,
-            'totalQuestions' => $totalQuestions,
-            'correctCount'   => $correctCount,
-            'scorePercent'   => $scorePercent,
-            'details'        => $details,
-            'comment'        => $comment,
+            'quiz'                => $quiz,
+            'correctCount'        => $correctCount,
+            'totalQuestions'      => $totalQuestions,
+            'scorePercent'        => $scorePercent,
+            'comment'             => $comment,
+            'questionsWithResult' => $questionsWithResult,
         ]);
     }
 
