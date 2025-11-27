@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use App\Models\QuizResult;
+
 
 class QuizPlayController extends Controller
 {
-    /**
-     * Pokaż formularz z pytaniami i odpowiedziami.
-     */
+    
     public function showForm(Quiz $quiz)
     {
-        // Dociągamy pytania razem z odpowiedziami
+        
         $quiz->load('questions.answers');
 
         return view('quizzes.play', [
@@ -20,15 +20,12 @@ class QuizPlayController extends Controller
         ]);
     }
 
-    /**
-     * Sprawdź odpowiedzi użytkownika.
-     */
+  
     public function check(Request $request, Quiz $quiz)
     {
         $quiz->load('questions.answers');
 
-        // WALIDACJA
-        // Oczekujemy tablicy answers[question_id] = answer_id
+   
         $validated = $request->validate(
             [
                 'answers'   => ['required', 'array'],
@@ -50,10 +47,10 @@ class QuizPlayController extends Controller
         foreach ($quiz->questions as $question) {
             $selectedAnswerId = $userAnswers[$question->id] ?? null;
 
-            // Wybrana odpowiedź (może być null, jeśli ktoś grzebał w formularzu)
+          
             $selectedAnswer = $question->answers->firstWhere('id', $selectedAnswerId);
 
-            // Poprawna odpowiedź
+           
             $correctAnswer = $question->answers->firstWhere('is_correct', true);
 
             $isCorrect = $selectedAnswer && $selectedAnswer->is_correct;
@@ -75,8 +72,15 @@ class QuizPlayController extends Controller
             : 0;
 
         $comment = $this->buildComment($scorePercent);
+        QuizResult::create([
+    'quiz_id'         => $quiz->id,
+    'user_id'         => auth()->id(), // jeśli nie ma logowania, można zostawić null
+    'correct_answers' => $correctCount,
+    'total_questions' => $totalQuestions,
+    'score_percent'   => $scorePercent,
+]);
 
-        // Można by też zapisać wynik do bazy – na razie samo wyświetlenie
+      
         return view('quizzes.result', [
             'quiz'                => $quiz,
             'correctCount'        => $correctCount,

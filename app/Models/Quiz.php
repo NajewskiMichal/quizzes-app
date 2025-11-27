@@ -29,4 +29,10 @@ class Quiz extends Model
     {
         return $this->hasMany(Question::class)->orderBy('position');
     }
+
+    public function results()
+{
+    return $this->hasMany(QuizResult::class);
+}
+
 }
