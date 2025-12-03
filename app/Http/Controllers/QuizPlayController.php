@@ -25,7 +25,7 @@ class QuizPlayController extends Controller
     {
         $quiz->load('questions.answers');
 
-   
+   //walidacja
         $validated = $request->validate(
             [
                 'answers'   => ['required', 'array'],
@@ -74,7 +74,7 @@ class QuizPlayController extends Controller
         $comment = $this->buildComment($scorePercent);
         QuizResult::create([
     'quiz_id'         => $quiz->id,
-    'user_id'         => auth()->id(), // jeśli nie ma logowania, można zostawić null
+    'user_id'         => auth()->id(),
     'correct_answers' => $correctCount,
     'total_questions' => $totalQuestions,
     'score_percent'   => $scorePercent,
