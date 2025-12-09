@@ -6,21 +6,22 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\QuizPlayController;
 use App\Http\Controllers\QuestionController;
 
+
+// Strona główna
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Quiz CRUD
+// CRUD dla Quizów 
+
 Route::resource('quizzes', QuizController::class);
 
-// Rozwiązywanie quizu
-Route::get('/quizzes/{quiz}/play', [QuizPlayController::class, 'showForm'])
-    ->name('quizzes.play');
+// Grupa tras do rozwiązywania quizów 
+Route::controller(QuizPlayController::class)->group(function () {
+    Route::get('/quizzes/{quiz}/play', 'showForm')->name('quizzes.play');
+    Route::post('/quizzes/{quiz}/play', 'check')->name('quizzes.check');
+});
 
-Route::post('/quizzes/{quiz}/play', [QuizPlayController::class, 'check'])
-    ->name('quizzes.check');
-
-// Dodawanie pytań do quizów
-Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])
-    ->name('quizzes.questions.create');
-
-Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])
-    ->name('quizzes.questions.store');
+// Grupa tras do zarządzania pytaniami
+Route::controller(QuestionController::class)->group(function () {
+    Route::get('/quizzes/{quiz}/questions/create', 'create')->name('quizzes.questions.create');
+    Route::post('/quizzes/{quiz}/questions', 'store')->name('quizzes.questions.store');
+});

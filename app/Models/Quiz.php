@@ -23,16 +23,31 @@ class Quiz extends Model
     ];
 
     /**
-     * Questions assigned to this quiz.
+     * Relacja: Quiz ma wiele pytań.
      */
     public function questions()
     {
         return $this->hasMany(Question::class)->orderBy('position');
     }
 
+    /**
+     * Relacja: Quiz ma wiele wyników (historii gier).
+     */
     public function results()
-{
-    return $this->hasMany(QuizResult::class);
-}
+    {
+        return $this->hasMany(QuizResult::class);
+    }
 
+    /**
+     * Zwraca klasę koloru CSS  zależnie od poziomu.
+        */
+    public function getDifficultyColorAttribute(): string
+    {
+        return match (strtolower($this->level)) {
+            'łatwy'  => 'success', // zielony
+            'średni' => 'warning', // żółty/pomarańczowy
+            'trudny' => 'danger',  // czerwony
+            default  => 'primary', // niebieski
+        };
+    }
 }
