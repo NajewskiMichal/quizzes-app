@@ -15,12 +15,13 @@ class Answer extends Model
         'is_correct',
     ];
 
+    // Automatyczna zamiana na true/false
     protected $casts = [
         'is_correct' => 'boolean',
     ];
 
     /**
-     * Parent question.
+     * Relacja: Odpowiedź należy do Pytania.
      */
     public function question()
     {

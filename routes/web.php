@@ -1,27 +1,22 @@
 <?php
 
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\QuizController;
-use App\Http\Controllers\QuizPlayController;
-use App\Http\Controllers\QuestionController;
 
+// --- STREFA PUBLICZNA (Dostępna dla każdego bez logowania) ---
+Route::get('/', [PublicController::class, 'index'])->name('home'); // Lista quizów
+Route::get('/quiz/{quiz}', [PublicController::class, 'show'])->name('quiz.show'); // Rozwiązywanie
+Route::post('/quiz/{quiz}', [PublicController::class, 'check'])->name('quiz.check'); // Sprawdzanie wyniku
 
-// Strona główna
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// --- LOGOWANIE (Tylko dla administratora) ---
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// CRUD dla Quizów 
-
-Route::resource('quizzes', QuizController::class);
-
-// Grupa tras do rozwiązywania quizów 
-Route::controller(QuizPlayController::class)->group(function () {
-    Route::get('/quizzes/{quiz}/play', 'showForm')->name('quizzes.play');
-    Route::post('/quizzes/{quiz}/play', 'check')->name('quizzes.check');
-});
-
-// Grupa tras do zarządzania pytaniami
-Route::controller(QuestionController::class)->group(function () {
-    Route::get('/quizzes/{quiz}/questions/create', 'create')->name('quizzes.questions.create');
-    Route::post('/quizzes/{quiz}/questions', 'store')->name('quizzes.questions.store');
+// --- PANEL ADMINA (Zabezpieczony middlewarem) ---
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Resource tworzy automatycznie trasy: index, create, store, destroy itd.
+    Route::resource('quizzes', AdminController::class);
 });
