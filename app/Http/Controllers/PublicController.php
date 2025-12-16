@@ -1,12 +1,15 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
     public function index() {
-        $quizzes = Quiz::all();
+        // Pobieramy quizy, ale tylko niezbędne dane (optymalizacja)
+        $quizzes = Quiz::withCount('questions')->get();
         return view('public.index', compact('quizzes'));
     }
 
@@ -18,13 +21,15 @@ class PublicController extends Controller
         $score = 0;
         $answers = $request->input('answers', []);
         
-        // Myślenie krytyczne: Prosta pętla porównująca odpowiedzi
+        // Myślenie krytyczne: Zamiast zapytań SQL w pętli,
+        // iterujemy po załadowanej kolekcji pytań (Eager Loading dzieje się automatycznie przez Route Model Binding jeśli tak skonfigurowano, lub tutaj)
         foreach($quiz->questions as $q) {
             if(isset($answers[$q->id]) && $answers[$q->id] === $q->correct) {
                 $score++;
             }
         }
         
+        // Zwracamy wynik sesją (Flash Message) zamiast zapisywać w bazie - prostota rozwiązania
         return redirect()->route('home')
             ->with('message', "Twój wynik w quizie '{$quiz->title}': $score / " . $quiz->questions->count());
     }

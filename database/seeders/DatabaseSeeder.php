@@ -11,22 +11,21 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        // 1. Konto Administratora (Dane do logowania)
-        // Login: admin@geo.pl / Hasło: haslo123
+        // 1. Konto Administratora
         User::create([
             'name' => 'Nauczyciel Geografii',
             'email' => 'admin@geo.pl',
-            'password' => Hash::make('haslo123'),
+            'password' => Hash::make('haslo123'), // hashowanie hasła
             'is_admin' => true,
         ]);
 
-        // 2. Przykładowy Quiz Geograficzny
+        // 2. Przykładowy Quiz
         $quiz = Quiz::create([
             'title' => 'Stolice Europy', 
             'description' => 'Sprawdź, czy znasz stolice naszych sąsiadów.'
         ]);
 
-        // Dodajemy pytania w jednej paczce (czysty kod)
+        // 3. Pytania (nowa struktura bez tabeli Answer)
         $quiz->questions()->createMany([
             [
                 'content' => 'Stolicą Niemiec jest:',
