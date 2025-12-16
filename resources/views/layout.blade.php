@@ -8,7 +8,7 @@
 <body class="bg-gray-100 text-gray-800">
     <nav class="bg-blue-600 text-white p-4 shadow mb-6">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-xl font-bold">🌍 GeoQuiz</a>
+            <a href="/" class="text-xl font-bold">GeoQuiz</a>
             <div>
                 @auth
                     <span class="mr-4">Witaj, Adminie</span>
