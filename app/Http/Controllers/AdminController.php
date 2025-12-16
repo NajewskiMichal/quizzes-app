@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     public function index() {
-        // withCount - optymalizacja, unika problemu N+1 przy liczeniu pytań
         $quizzes = Quiz::withCount('questions')->get();
         return view('admin.index', compact('quizzes'));
     }
@@ -18,7 +17,7 @@ class AdminController extends Controller
     }
 
     public function store(Request $request) {
-        // Walidacja tablicowa dla pytań dynamicznych (questions.*)
+        // Walidacja tablicowa dla pytań dynamicznych
         $data = $this->validateQuiz($request);
 
         // Tworzymy quiz i pytania w jednej transakcji logicznej
@@ -39,7 +38,6 @@ class AdminController extends Controller
 
         $quiz->update(['title' => $data['title'], 'description' => $data['description']]);
 
-        // Strategia: Zamiast skomplikowanej synchronizacji ID pytań,
         // usuwamy stare i wstawiamy nowe. Gwarantuje to spójność danych.
         $quiz->questions()->delete();
         $quiz->questions()->createMany($data['questions']);
@@ -48,13 +46,13 @@ class AdminController extends Controller
     }
 
     public function destroy(Quiz $quiz) {
-        // Pytania usuną się kaskadowo (jeśli ustawione w bazie) lub przez Eloquent
+        // Pytania usuną się kaskadowo
         $quiz->questions()->delete(); 
         $quiz->delete();
         return back()->with('success', 'Quiz usunięty.');
     }
 
-    // Helper do walidacji - DRY (Don't Repeat Yourself)
+    // Helper do walidacji
     private function validateQuiz($request) {
         return $request->validate([
             'title' => 'required|string',

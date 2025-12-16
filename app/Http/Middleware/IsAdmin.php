@@ -7,7 +7,7 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next)
     {
-        // Sprawdza: Czy zalogowany? ORAZ Czy ma flagę admina?
+        // Sprawdza czy zalogowany? ORAZ Czy ma flagę admina?
         if (auth()->check() && auth()->user()->is_admin) {
             return $next($request);
         }

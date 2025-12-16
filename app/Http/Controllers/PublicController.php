@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class PublicController extends Controller
 {
     public function index() {
-        // Pobieramy quizy, ale tylko niezbędne dane (optymalizacja)
+        // Pobieramy quizy
         $quizzes = Quiz::withCount('questions')->get();
         return view('public.index', compact('quizzes'));
     }
@@ -21,15 +21,14 @@ class PublicController extends Controller
         $score = 0;
         $answers = $request->input('answers', []);
         
-        // Myślenie krytyczne: Zamiast zapytań SQL w pętli,
-        // iterujemy po załadowanej kolekcji pytań (Eager Loading dzieje się automatycznie przez Route Model Binding jeśli tak skonfigurowano, lub tutaj)
+        // iterujemy po załadowanej kolekcji pytań
         foreach($quiz->questions as $q) {
             if(isset($answers[$q->id]) && $answers[$q->id] === $q->correct) {
                 $score++;
             }
         }
         
-        // Zwracamy wynik sesją (Flash Message) zamiast zapisywać w bazie - prostota rozwiązania
+        // Zwracamy wynik sesją
         return redirect()->route('home')
             ->with('message', "Twój wynik w quizie '{$quiz->title}': $score / " . $quiz->questions->count());
     }

@@ -15,11 +15,11 @@ class AdminController extends Controller
     }
 
     public function store(Request $request) {
-        // Walidacja - klucz do bezpieczeństwa
+        // Walidacja
         $data = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable',
-            'questions' => 'required|array|min:1', // Wymuś min. 1 pytanie
+            'questions' => 'required|array|min:1',
             'questions.*.content' => 'required',
             'questions.*.option_a' => 'required',
             'questions.*.option_b' => 'required',
@@ -28,7 +28,7 @@ class AdminController extends Controller
             'questions.*.correct' => 'required|in:a,b,c,d',
         ]);
 
-        // Transakcyjne podejście: Najpierw Quiz, potem powiązane Pytania
+        // Transakcyjność - Najpierw Quiz, potem powiązane Pytania
         $quiz = Quiz::create(['title' => $data['title'], 'description' => $data['description']]);
         $quiz->questions()->createMany($data['questions']);
 

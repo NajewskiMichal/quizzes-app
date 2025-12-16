@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\IsAdmin; // <--- 1. Importujemy Twoją klasę
+use App\Http\Middleware\IsAdmin;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
-        // <--- 2. Tutaj rejestrujemy skrót 'admin'
+        // rejestrujemy skrót 'admin'
         $middleware->alias([
             'admin' => IsAdmin::class,
         ]);

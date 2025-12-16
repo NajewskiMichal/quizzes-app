@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model 
 {
-    // Mass Assignment Protection - kluczowe dla bezpieczeństwa
     protected $fillable = ['title', 'description'];
     
     // Relacja: Jeden Quiz posiada wiele Pytań
