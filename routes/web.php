@@ -5,13 +5,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
-// Strefa Publiczna - dostępna dla każdego studenta
+// Strefa Publiczna
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::get('/quiz/{quiz}', [PublicController::class, 'show'])->name('quiz.show');
 Route::post('/quiz/{quiz}', [PublicController::class, 'check'])->name('quiz.check');
@@ -22,7 +17,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Panel Administratora - zabezpieczony middlewarem 'admin'
-// Grupowanie tras ułatwia zarządzanie uprawnieniami w jednym miejscu
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('quizzes', AdminController::class);
 });

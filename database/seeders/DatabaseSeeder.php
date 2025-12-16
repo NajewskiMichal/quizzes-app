@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         // Konto Administratora
         User::create([
-            'name' => 'Nauczyciel Geografii',
-            'email' => 'admin@geo.pl',
+            'name' => 'Nauczyciel',
+            'email' => 'admin@admin.pl',
             'password' => Hash::make('haslo123'),
             'is_admin' => true,
         ]);
